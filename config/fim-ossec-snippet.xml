@@ -1,0 +1,13 @@
+<!--
+  Append to the END of /var/ossec/etc/ossec.conf on the Wazuh server (or an agent).
+  Replace /home/anmol/important with the folder you want to protect.
+  Then: sudo systemctl restart wazuh-manager   (or wazuh-agent)
+
+  realtime="yes"       -> events within seconds (inotify) instead of the 12-hour scheduled scan
+  report_changes="yes" -> alerts include a diff of what changed in text files
+-->
+<ossec_config>
+  <syscheck>
+    <directories realtime="yes" report_changes="yes" check_all="yes">/home/anmol/important</directories>
+  </syscheck>
+</ossec_config>
