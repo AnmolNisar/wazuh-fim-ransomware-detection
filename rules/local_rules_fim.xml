@@ -1,0 +1,42 @@
+<!--
+  Project 2 rules: ransomware-like behaviour detected with File Integrity Monitoring (FIM).
+  Append these groups to /var/ossec/etc/rules/local_rules.xml on the Wazuh server.
+
+  Built-in FIM rules used:
+    550 = file modified (integrity checksum changed)
+    553 = file deleted
+    554 = file added
+-->
+<group name="local,fim_ransomware,">
+
+  <!-- A ransom note appears in a monitored folder -->
+  <rule id="100200" level="12">
+    <if_sid>554</if_sid>
+    <match>RANSOM</match>
+    <description>Possible ransomware: ransom note created ($(file)).</description>
+    <mitre>
+      <id>T1486</id>
+    </mitre>
+  </rule>
+
+  <!-- Many files modified in a short time = mass encryption -->
+  <rule id="100201" level="12" frequency="8" timeframe="30">
+    <if_matched_sid>550</if_matched_sid>
+    <match>/home/</match>
+    <description>Possible ransomware: 8+ files modified within 30 seconds.</description>
+    <mitre>
+      <id>T1486</id>
+    </mitre>
+  </rule>
+
+  <!-- Many files deleted in a short time = data destruction / cleanup after encryption -->
+  <rule id="100202" level="12" frequency="8" timeframe="30">
+    <if_matched_sid>553</if_matched_sid>
+    <match>/home/</match>
+    <description>Possible ransomware: 8+ files deleted within 30 seconds.</description>
+    <mitre>
+      <id>T1485</id>
+    </mitre>
+  </rule>
+
+</group>
